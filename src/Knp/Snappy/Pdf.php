@@ -49,7 +49,13 @@ class Pdf extends AbstractGenerator
     {
         $options = $this->handleOptions($options);
 
-        parent::generate($input, $output, $options, $overwrite);
+	try{
+	        parent::generate($input, $output, $options, $overwrite);
+	} catch(\RuntimeException $e) {
+		if(strpos($e->getMessage(), 'http error: 120') === null) {
+			throw $e;
+		}
+	}
 
         // to delete header or footer generated files
         if (array_key_exists('header-html', $options) && !filter_var($options['header-html'], FILTER_VALIDATE_URL)) {
